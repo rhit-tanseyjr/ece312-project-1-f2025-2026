@@ -39,7 +39,7 @@
             break; 
         }
         
-        printf("Client: %s", buffer);
+        printf("\n Server: %s \n Client: ", buffer);
     }
     return NULL;
 }
@@ -91,7 +91,7 @@
 
         while(is_running){
 
-            printf("Server: ");
+            printf("\nServer: ");
 
             fflush(stdout);
 
