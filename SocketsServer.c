@@ -33,13 +33,16 @@
             is_running = 0;
             break;
         }
+
+        buffer[strcmp(buffer, "\n")] = 0;
         if (strcmp(buffer, "quit\n") ==0){
             printf("Client is disconnecting");
             is_running = 0;
             break; 
         }
         
-        printf("\n Server: %s \n Client: ", buffer);
+        printf("<client> %s\n", buffer);
+        fflush(stdout);
     }
     return NULL;
 }
@@ -91,30 +94,22 @@
 
         while(is_running){
 
-            printf("\nServer: ");
-
-            fflush(stdout);
-
             if (fgets(buffer, 256, stdin) == NULL) break;
-
+            buffer[strcspn(buffer, "\n")] = 0;
             if (strcmp(buffer, "quit\n") == 0) {
                 is_running = 0;
+                strcat(buffer, "\n");
+                write(newsockfd, buffer, strlen(buffer));
                 break;
             }
-
-//        bzero(buffer,256);
-//        n = read(newsockfd,buffer,255);
-
- //       if (n < 0) error("ERROR reading from socket");
-
-  //      printf("Here is the message: %s\n",buffer);
-
+        printf("<server> %s\n", buffer);
+        strcat(buffer, "\n");
         n = write(newsockfd, buffer, strlen(buffer));
 
         if (n < 0) error("ERROR writing to socket");
 
         }
-        
+        shutdown(newsockfd, SHUT_RDWR);
         pthread_join(read_thread, NULL);
         close(newsockfd);
         close(sockfd);
