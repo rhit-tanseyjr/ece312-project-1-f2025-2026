@@ -9,6 +9,13 @@
 
   int is_running = 1;
 
+    char client_name[64] = "Client";
+    char server_name[64] = "Server";
+
+
+    static inline void trim_eol(char *s) { 
+        s[strcspn(s, "\r\n")] = '\0'; 
+    }
 
 
   void error(char *msg)
@@ -39,7 +46,23 @@
             break; 
         }
         
-        printf("Client: %s", buffer);
+        if (strncmp(buffer, "NAME:", 5) == 0) {
+        const char *p = buffer + 5;
+        if (*p) {
+            strncpy(client_name, p, sizeof(client_name)-1);
+            client_name[sizeof(client_name)-1] = '\0';
+        }
+        printf("\n[Connected with %s]\nYou> ", client_name);
+        fflush(stdout);
+        continue;
+    }
+        
+        
+        buffer[n] = '\0';
+        buffer[strcspn(buffer, "\r\n")] = '\0';
+
+        printf("\n<%s> %s\n<You> ", client_name, buffer);  
+        fflush(stdout);
     }
     return NULL;
 }
@@ -91,7 +114,7 @@
 
         while(is_running){
 
-            printf("Server: ");
+            printf("<You> ");
 
             fflush(stdout);
 
